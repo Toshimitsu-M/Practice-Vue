@@ -1,0 +1,99 @@
+<!-- local_port 8081 -->
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"
+            integrity="sha512-VMsZqo0ar06BMtg0tPsdgRADvl0kDHpTbugCBBrL55KmucH6hP9zWdLIWY//OTfMnzz6xWQRxQqsUFefwHuHyg=="
+            crossorigin="anonymous"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@next/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
+        <title>Vue_search</title>
+    </head>
+<body>
+<div id="app">
+    <input type="text" v-model="keyword">
+    <table>
+        <tr v-for="ingredient in filteredIngredients" :key="ingredient.id">
+            <td v-text="ingredient.id"></td>
+            <td v-text="ingredient.nutrient"></td>
+            <td v-text="ingredient.food"></td>
+            <td v-text="ingredient.amount"></td>
+        </tr>
+    </table>
+</div>
+
+<script>
+
+    new Vue({
+        el: '#app',
+        data: {
+            keyword: '',
+            amount_key: 0,
+            ingredients: [
+                {
+                    id: 1,
+                    nutrient: 'タンパク質',
+                    food: 'にわとり 若鶏肉 ささ身 生',
+                    amount: 23.9
+                },
+                {
+                    id: 2,
+                    nutrient: 'タンパク質',
+                    food: 'ぶた 大型種肉 ロース 赤肉 生',
+                    amount: 22.7
+                },
+                {
+                    id: 3,
+                    nutrient: 'タンパク質',
+                    food: 'ぶた 大型種肉 ヒレ 赤肉 生',
+                    amount: 22.2
+                },
+                {
+                    id: 4,
+                    nutrient: 'タンパク質',
+                    food: 'ぶた 大型種肉 もも 赤肉 生',
+                    amount: 22.1
+                },
+                {
+                    id: 5,
+                    nutrient: 'タンパク質',
+                    food: 'にわとり 若鶏肉 むね 皮つき 生',
+                    amount: 21.3
+                },
+            ]
+        },
+        computed: {
+            filteredIngredients: function() {
+
+                var ingredients = [];
+
+                for(var i in this.ingredients) {
+
+                    var ingredient = this.ingredients[i];
+
+                    if(ingredient.nutrient.indexOf(this.keyword) !== -1 ||
+                        ingredient.food.indexOf(this.keyword) !== -1 
+                        ) {
+
+                            // ||
+                        // ingredient.amount.indexOf(this.amount_key) !== -1
+                        ingredients.push(ingredient);
+
+                    }
+
+                }
+
+                return ingredients;
+
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

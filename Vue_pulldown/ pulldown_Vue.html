@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@next"></script>
+    <title>pulldown_Vue</title>
+</head>
+<body>
+    <div id="v-model-select-dynamic" class="demo">
+        <select v-model="selectedFruits" multiple>
+            <option disabled>果物一覧</option>
+            <option v-for="fruit in optionFruits"
+                :value="fruit.name">{{ fruit.name }}</option>
+        </select>
+        <span>結果：　{{ selectedFruits }}</span>
+    </div>
+
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    selectedFruits: 'りんご', 
+                    optionFruits: [ 
+                        { id: 1, name: 'りんご' }, 
+                        { id: 2, name: 'みかん' }, 
+                        { id: 3, name: 'ぶどう' } 
+                    ]
+                }
+            }
+        }).mount('#v-model-select-dynamic')
+    </script>
+</body>
+</html>

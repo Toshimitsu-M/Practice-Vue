@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>vueを使ってaxiosを学ぶ</title>
+</head>
+
+<body>
+    <div id="app">
+        <input v-model="name"></br>
+        <button v-on:click="createNewUser">作成</button>
+        <ul>
+            <li v-for="user in users">{{ user.name }} :<button v-on:click="deleteUser(user.id)">削除</button></li>
+        </ul>
+    </div>
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <script>
+        Vue.createApp({
+            el: '#app',
+            data(){
+                return {
+                    users: [],
+                    name: '',
+                    selectedFruits: '',
+                    optionFruits: [
+                        { id: 1, name: 'りんご' },
+                        { id: 2, name: 'みかん' },
+                        { id: 3, name: 'ぶどう' }
+                    ],
+                }
+            },
+            methods: {
+            createNewUser: function(){
+                axios.post('https://jsonplaceholder.typicode.com/users',{name: this.name})
+                    .then(response => this.users.unshift(response.data))
+                    .catch(error => console.log(error))
+                },
+                // クリックを押してもブラウザ上のデータは変化はありません。また、サーバ上のデータも実際にはデータの削除は行われません。DELETEメソッドが成功したことのみデベロッパーツールのログで確認することができます。DELETEメソッドの場合はresponse.dataには何も入っていません。
+            deleteUser: function(id){
+                axios.delete('https://jsonplaceholder.typicode.com/users' + id)
+                    .then(response =>
+                        console.log(response))
+                    .catch(error =>
+                        console.log(error))
+                },
+            },
+            mounted(){
+                axios.defaults.baseURL = 'https://jsonplaceholder.typicode.com';
+                axios.get('/users')
+                    .then(response => this.users = response.data)
+                    // URLの間違いやネットワークに障害が発生してサーバに送信できない場合はerror.responseはundefinedになります。
+                    .catch(error => {
+                        console.log(error);
+                        console.log(JSON.stringify(error));
+                        console.log(error.name);
+                        console.log(error.message);
+                        console.log(error.request);
+                        console.log(error.response);
+                    });
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
+
+
+
+<!-- Headerの設定
+認証に利用するTokenなどをHeaderに設定したい場合があります。defaults値に設定することでaxiosでリクエスト毎にヘッダーに設定する必要がなくなります。
+axios.defaults.headers.common['Authorization'] = `Bearer token_id`; -->
+<!-- Interceptorsの設定
+ axiosからリクエストを送信する前、またサーバからレスポンスが戻ってきた際にRequest,Responseオブジェクトに対して処理を追加することができます。
+Requestでの設定
+例えばリクエストの設定内容を確認したい場合は下記のように記述することで確認することができます。
+axios.defaults.baseURL = 'https://jsonplaceholder.typicode.com';
+axios.interceptors.request.use((config) => {console.log(config)return config;});
+設定は見るだけでなく設定することも可能です。baseURlを上書きしてみます。
+axios.defaults.baseURL = 'https://jsonplaceholder.typicode.com';
+axios.interceptors.request.use((config) => {config.baseURL = 'https://test.com'; console.log(config)return config;});
+responseでの設定
+ステータスコードなどサーバ側から戻ってきた情報を確認することができます
+axios.interceptors.response.use((response) => {
+    console.log(response);
+    return response;
+});
+認証が行われている環境で認証に失敗しステータスコード401が戻ってきた場合にlogout処理を行うといった使い方があります。各レスポンスのステータスコードを確認することでそれぞれのコードに応じた処理を実装することができます。
+axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response.status === 401) {
+            logoutの処理を記述する
+        }
+        return Promise.reject(error);
+    }
+);
+ファイルアップロードの進捗確認でプログレスバーを用いる
+第３引数に下記のように設定を行い、progressEventでファイル全体のサイズprogressEvent.totalとアップロードされたサイズprogressEvent.loadedで確認することができます
+const form = new FormData();
+form.append('file', event.dataTransfer.files[0]);
+axios.post('/api/karte_file', form, {
+    onUploadProgress: progressEvent => {
+        console.log(progressEvent.loaded)
+        console.log(progressEvent.total)
+    }
+});
+この値を割ると全体に対する現在の進捗具合を知ることができます
+ratio = Math.floor((progressEvent.loaded)*100/progressEvent.total) + '%';-->
+
+    // axios.post('/users', {firstName: 'Fred', lastName: 'Flintstone'})
+    //     .then(function (response) {console.log(response);})
+    //     .catch(function (error) {console.log(error);});
